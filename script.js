@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Settings configuration
     let numTeams = 2;
-    let playersPerTeam = 5;
+    let playersPerTeam = 4;
     
     const btnSettings = document.getElementById('btn-settings');
     const modalSettings = document.getElementById('settings-modal');
@@ -28,13 +28,35 @@ document.addEventListener('DOMContentLoaded', () => {
     btnCloseSettings.addEventListener('click', () => modalSettings.classList.add('hidden'));
     btnSaveSettings.addEventListener('click', () => {
         numTeams = parseInt(inputNumTeams.value) || 2;
-        playersPerTeam = parseInt(inputPlayersPerTeam.value) || 5;
+        playersPerTeam = parseInt(inputPlayersPerTeam.value) || 4;
         badgeConfig.textContent = `${numTeams} Times de ${playersPerTeam}`;
         modalSettings.classList.add('hidden');
+        resultsSection.classList.add('hidden'); // Hide old results when settings change
+        
+        // Sync number of player input rows
+        const requiredSlots = numTeams * playersPerTeam;
+        const groups = document.querySelectorAll('.player-input-group');
+        const currentSlots = groups.length;
+        
+        if (currentSlots < requiredSlots) {
+            for (let i = currentSlots; i < requiredSlots; i++) {
+                addPlayerInput();
+            }
+        } else if (currentSlots > requiredSlots) {
+            let toRemove = currentSlots - requiredSlots;
+            for (let i = groups.length - 1; i >= 0 && toRemove > 0; i--) {
+                const input = groups[i].querySelector('input');
+                if (input && !input.value.trim()) {
+                    groups[i].remove();
+                    toRemove--;
+                }
+            }
+            updatePlayerIndexes();
+        }
     });
 
     // Initial slots configuration
-    const initialPlayersCount = 12; // Start with 12 slots for a good default
+    const initialPlayersCount = numTeams * playersPerTeam; // Start with exactly config requirement
     
     // Initialize with empty slots
     for(let i=0; i<initialPlayersCount; i++) {
@@ -118,6 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const loadingOverlay = document.getElementById('loading-overlay');
         loadingOverlay.classList.remove('hidden');
+        resultsSection.classList.add('hidden'); // Clear previous results while loading
 
         setTimeout(() => {
             // Shuffle within categories to ensure randomness but keep balance
