@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sorteio do Fut</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="top-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="#22C55E" stroke-width="2"/>
+                        <path d="M12 2L12 6M12 18L12 22M2 12L6 12M18 12L22 12M5 5L8 8M16 16L19 19M5 19L8 16M16 8L19 5" stroke="#22C55E" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="3" stroke="#22C55E" stroke-width="2"/>
+                    </svg>
+                </div>
+                <h1>Sorteio do Fut</h1>
+            </div>
+            <button id="btn-settings" class="settings-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F172A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
+        </header>
+
+        <!-- Hero Card -->
+        <section class="hero-card">
+            <h2>Monte os times<br>em segundos.</h2>
+            <p>Equilibre a pelada definindo o nível de cada jogador. Sem panelinha, só futebol.</p>
+            <div class="hero-badges">
+                <div class="badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <span id="badge-config">2 Times de 5</span>
+                </div>
+                <div class="badge">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    <span>Equilíbrio A/B/C</span>
+                </div>
+            </div>
+            
+        </section>
+
+        <!-- Players List -->
+        <section class="players-section">
+            <div class="section-header">
+                <h3>Escalação dos Craques</h3>
+                <button id="clear-all" class="btn-clear">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    <span>Limpar Tudo</span>
+                </button>
+            </div>
+            
+            <div id="players-list" class="players-list">
+                <!-- Inputs injected by JS -->
+            </div>
+            
+            <button id="sort-teams" class="btn-primary">Sortear Times</button>
+        </section>
+
+        <!-- Results Section -->
+        <section id="results-section" class="results-section hidden">
+            <div class="section-header">
+                <h3>Times Sorteados!</h3>
+            </div>
+            
+            <div id="teams-container" class="teams-container">
+                <!-- Teams injected by JS -->
+            </div>
+            
+            <div id="reserves-container" class="reserves-container hidden">
+                <div class="team-header" style="background: var(--input-gray); border-radius: var(--radius-lg) var(--radius-lg) 0 0; margin-top: 16px;">
+                    <h4 style="color: var(--text-dark);">Reserva/F.O.</h4>
+                </div>
+                <ul id="reserves-list" class="team-list" style="background: var(--bg-white); border: 1px solid var(--input-gray); border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg);">
+                    <!-- Reserves injected by JS -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- Spacer for FAB and Bottom Nav -->
+        <div class="bottom-spacer"></div>
+
+        <!-- FAB -->
+        <button id="add-player" class="fab-add">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        </button>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="#" class="nav-item active">
+                <div class="nav-pill">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>
+                    <span>Sorteio</span>
+                </div>
+            </a>
+            <a href="#" class="nav-item" onclick="event.preventDefault()">
+                <span class="badge-soon">Em breve</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                <span>Histórico</span>
+            </a>
+            <a href="#" class="nav-item" onclick="event.preventDefault()">
+                <span class="badge-soon">Em breve</span>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>Perfil</span>
+            </a>
+        </nav>
+
+        <!-- Settings Modal -->
+        <div id="settings-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Configurações</h3>
+                    <button id="close-settings" class="btn-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Quantidade de Times</label>
+                        <input type="number" id="input-num-teams" value="2" min="2" max="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Jogadores por Time</label>
+                        <input type="number" id="input-players-per-team" value="5" min="2" max="11">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="save-settings" class="btn-primary">Salvar</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
