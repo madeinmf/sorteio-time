@@ -116,46 +116,64 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Shuffle within categories to ensure randomness but keep balance
-        const categorized = { A: [], B: [], C: [] };
-        players.forEach(p => {
-            if (categorized[p.category]) categorized[p.category].push(p);
-            else categorized[p.category] = [p]; // Fallback
-        });
-        
-        ['A', 'B', 'C'].forEach(cat => {
-            categorized[cat] = shuffleArray(categorized[cat]);
-        });
-        
-        // Final sorted array of players, starting from best to worst category
-        const sortedPlayers = [...categorized['A'], ...categorized['B'], ...categorized['C']];
-        
-        // Distribute to Teams alternately to keep balance
-        const teams = Array.from({ length: numTeams }, () => []);
-        const reserves = [];
-        
-        let currentTeamIndex = 0;
-        for (let i = 0; i < sortedPlayers.length; i++) {
-            const p = sortedPlayers[i];
+        const loadingOverlay = document.getElementById('loading-overlay');
+        loadingOverlay.classList.remove('hidden');
+
+        setTimeout(() => {
+            // Shuffle within categories to ensure randomness but keep balance
+            const categorized = { A: [], B: [], C: [] };
+            players.forEach(p => {
+                if (categorized[p.category]) categorized[p.category].push(p);
+                else categorized[p.category] = [p]; // Fallback
+            });
             
-            let added = false;
-            let startIndex = currentTeamIndex;
-            do {
-                if (teams[currentTeamIndex].length < playersPerTeam) {
-                    teams[currentTeamIndex].push(p);
-                    added = true;
-                    currentTeamIndex = (currentTeamIndex + 1) % numTeams;
-                    break;
+            ['A', 'B', 'C'].forEach(cat => {
+                categorized[cat] = shuffleArray(categorized[cat]);
+            });
+            
+            // Final sorted array of players, starting from best to worst category
+            const sortedPlayers = [...categorized['A'], ...categorized['B'], ...categorized['C']];
+            
+            // Distribute to Teams by balancing total "score"
+            const teams = Array.from({ length: numTeams }, () => ({
+                players: [],
+                score: 0
+            }));
+            const reserves = [];
+            
+            const categoryScores = { 'A': 3, 'B': 2, 'C': 1 };
+            
+            for (let i = 0; i < sortedPlayers.length; i++) {
+                const p = sortedPlayers[i];
+                const pScore = categoryScores[p.category] || 1;
+                
+                // Find the team with the lowest score that is NOT full
+                let targetTeam = null;
+                let minScore = Infinity;
+                
+                for (let j = 0; j < numTeams; j++) {
+                    if (teams[j].players.length < playersPerTeam) {
+                        if (teams[j].score < minScore) {
+                            minScore = teams[j].score;
+                            targetTeam = teams[j];
+                        }
+                    }
                 }
-                currentTeamIndex = (currentTeamIndex + 1) % numTeams;
-            } while (currentTeamIndex !== startIndex);
-            
-            if (!added) {
-                reserves.push(p);
+                
+                if (targetTeam) {
+                    targetTeam.players.push(p);
+                    targetTeam.score += pScore;
+                } else {
+                    reserves.push(p);
+                }
             }
-        }
-        
-        renderResults(teams, reserves);
+            
+            // Extract just the arrays of players
+            const teamArrays = teams.map(t => t.players);
+            
+            renderResults(teamArrays, reserves);
+            loadingOverlay.classList.add('hidden');
+        }, 2500); // 2.5 seconds loading animation
     });
     
     function shuffleArray(array) {
@@ -174,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render Teams
         teams.forEach((team, index) => {
             if (team.length > 0) {
-                teamsContainer.appendChild(createTeamCard(`Time ${index + 1}`, team));
+                teamsContainer.appendChild(createTeamCard(index, team));
             }
         });
         
@@ -196,30 +214,52 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 100);
     }
     
-    function createTeamCard(teamName, players) {
+    const humorNames = [
+        { name: "Rei Davi", sub: "Time de reis fortes, derrubadores de gigantes" },
+        { name: "Arca de Noé", sub: "Tem de tudo um pouco, a maioria é animal" },
+        { name: "Sansão", sub: "Cuidado pra não cortar o cabelo e perder a força" },
+        { name: "Exército de Gideão", sub: "Meia dúzia de gatos pingados que fazem milagre" },
+        { name: "Muralhas de Jericó", sub: "Uma gritaria danada e a defesa cai toda" },
+        { name: "Lázaro", sub: "Dizem as más línguas que ressuscita no segundo tempo" },
+        { name: "Golias", sub: "Muito tamanho, pouca habilidade com a bola" },
+        { name: "Jonas", sub: "Passou 3 dias sumido no campo sem tocar na bola" },
+        { name: "Filho Pródigo", sub: "Sempre volta pra defesa depois de tomar goleada" },
+        { name: "Mar Vermelho", sub: "A defesa abre toda para o atacante passar" },
+        { name: "Torre de Babel", sub: "Ninguém se entende, mas a intenção é boa" },
+        { name: "Zaqueu", sub: "Baixinhos que resolvem subir pra cabecear" }
+    ];
+
+    function createTeamCard(teamIndex, players) {
+        const teamPalette = teamIndex % 5;
+        const funnyTeam = humorNames[Math.floor(Math.random() * humorNames.length)];
+        
         const card = document.createElement('div');
-        card.className = 'team-card';
+        card.className = `team-card-styled team-color-${teamPalette}`;
         
         const header = document.createElement('div');
-        header.className = 'team-header';
+        header.className = 'team-header-styled';
         
-        const counts = { A:0, B:0, C:0 };
-        players.forEach(p => counts[p.category]++);
-        let statsStr = Object.entries(counts).filter(([_, c]) => c > 0).map(([cat, c]) => `${c}${cat}`).join(' · ');
-        
+        const trophySvg = `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>`;
+
         header.innerHTML = `
-            <h4>${teamName}</h4>
-            <span class="team-stats">${players.length} Jogadores (${statsStr})</span>
+            <div class="team-header-info">
+                <span class="team-number">TIME 0${teamIndex + 1}</span>
+                <h4 class="team-funny-name">${funnyTeam.name}</h4>
+            </div>
+            <div class="team-trophy">${trophySvg}</div>
         `;
         
-        const list = document.createElement('ul');
-        list.className = 'team-list';
+        const desc = document.createElement('div');
+        desc.className = 'team-desc';
+        desc.innerHTML = `<p>${funnyTeam.sub}</p>`;
         
-        players.forEach(p => {
-            list.appendChild(createPlayerItem(p));
-        });
+        const list = document.createElement('ul');
+        list.className = 'team-list-styled';
+        
+        players.forEach(p => list.appendChild(createPlayerItem(p)));
         
         card.appendChild(header);
+        card.appendChild(desc);
         card.appendChild(list);
         
         return card;
@@ -227,14 +267,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     function createPlayerItem(player) {
         const li = document.createElement('li');
-        const initials = player.name.substring(0, 2).toUpperCase();
+        li.className = 'player-pill';
+        const userIcon = `<svg class="icon-user" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>`;
         
         li.innerHTML = `
             <div class="player-info">
-                <div class="avatar">${initials}</div>
+                ${userIcon}
                 <span class="player-name">${player.name}</span>
             </div>
-            <span class="cat-badge ${player.category}">Cat ${player.category}</span>
+            <span class="cat-badge-styled ${player.category}">CAT ${player.category}</span>
         `;
         return li;
     }
