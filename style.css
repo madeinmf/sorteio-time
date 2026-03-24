@@ -477,7 +477,7 @@ body {
     transform: translateX(-50%);
     width: 100%;
     max-width: 480px;
-    height: 80px;
+    height: 64px;
     background: var(--bg-white);
     display: flex;
     justify-content: space-around;
